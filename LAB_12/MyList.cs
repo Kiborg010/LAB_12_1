@@ -1,4 +1,4 @@
-﻿using ClassLibrary1;
+using ClassLibrary1;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,8 +10,8 @@ namespace LAB_12
 {
     public class MyList<T> where T : IInit, ICloneable, new()
     {
-        Point<Car>? begin = null;
-        Point<Car>? end = null;
+        Point<T>? begin = null;
+        Point<T>? end = null;
 
         int count = 0;
         
@@ -19,10 +19,10 @@ namespace LAB_12
 
         public int Count => count;
 
-        public void AddToBegin(Car item)
+        public void AddToBegin(T item)
         {
-            Car newData = (Car)item.Clone();
-            Point<Car> newItem = new Point<Car>(newData);
+            T newData = (T)item.Clone();
+            Point<T> newItem = new Point<T>(newData);
             count++;
             if (begin != null)
             {
@@ -37,10 +37,10 @@ namespace LAB_12
             }
         }
 
-        public void AddToEnd(Car item)
+        public void AddToEnd(T item)
         {
-            Car newData = (Car)item.Clone();
-            Point<Car> newItem = new Point<Car>(newData);
+            T newData = (T)item.Clone();
+            Point<T> newItem = new Point<T>(newData);
             count++;
             if (end != null)
             {
@@ -55,7 +55,7 @@ namespace LAB_12
             }
         }
 
-        public void AddTo(int index, Car item)
+        public void AddTo(int index, T item)
         {
             if (index == 0)
             {
@@ -68,14 +68,14 @@ namespace LAB_12
             else
             {
                 count++;
-                Point<Car>? current = begin;
-                Car newData = (Car)item.Clone();
-                Point<Car> addition = new Point<Car>(newData);
+                Point<T>? current = begin;
+                T newData = (T)item.Clone();
+                Point<T> addition = new Point<T>(newData);
                 for (int i = 0; (current != null) && (i != index); i++)
                 {
                     current = current.Next;
                 }
-                Point<Car>? previous = current.Previous;
+                Point<T>? previous = current.Previous;
                 addition.Previous = previous;
                 previous.Next = addition;
                 current.Previous = addition;
@@ -85,7 +85,7 @@ namespace LAB_12
 
         public MyList() { }
 
-        public MyList(Car[] collection)
+        public MyList(T[] collection)
         {
             if (collection == null)
             {
@@ -95,8 +95,8 @@ namespace LAB_12
             {
                 throw new Exception("empty collection");
             }
-            Car newData = (Car)collection[0].Clone();
-            begin = new Point<Car>(newData);
+            T newData = (T)collection[0].Clone();
+            begin = new Point<T>(newData);
             count++;
             for (int i = 0; i < collection.Length; i++)
             {
@@ -110,7 +110,7 @@ namespace LAB_12
             {
                 Console.WriteLine("Список пуст");
             }
-            Point<Car>? current = begin;
+            Point<T>? current = begin;
             for (int i = 0; current != null; i++)
             {
                 if (current.Data == null)
@@ -132,25 +132,29 @@ namespace LAB_12
             }
         }
 
-        public Point<Car>? FirstItem()
+        public Point<T>? FirstItem()
         {
             return begin;
         }
 
-        public Point<Car>? FindItem(int year)
+        public Point<T>? FindItem(int year)
         {
-            Point<Car>? current = begin;
+            Point<T>? current = begin;
             while (current != null)
             {
                 if (current.Data == null)
                 {
                     throw new Exception("Data is null");
                 }
-                if (current.Data.Year == year)
+                if (current.Data is Car)
                 {
-                    return current;
+                    Car car = current.Data as Car;
+                    if (car.Year == year)
+                    {
+                        return current;
+                    }
+                    current = current.Next;
                 }
-                current = current.Next;
             }
             return null;
         }
@@ -164,7 +168,7 @@ namespace LAB_12
             bool isDelite = false;
             while (FindItem(year) != null) 
             {
-                Point<Car>? pos = FindItem(year);
+                Point<T>? pos = FindItem(year);
                 if (pos == null)
                 {
                     isDelite = false;
@@ -191,8 +195,8 @@ namespace LAB_12
                     }
                     else
                     {
-                        Point<Car> next = pos.Next;
-                        Point<Car> previous = pos.Previous;
+                        Point<T> next = pos.Next;
+                        Point<T> previous = pos.Previous;
                         pos.Next.Previous = previous;
                         pos.Previous.Next = next;
                         isDelite = true;
@@ -210,10 +214,10 @@ namespace LAB_12
             count = 0;
         }
 
-        public MyList<Car> Clone()
+        public MyList<T> Clone()
         {
-            Point<Car>? current = begin;
-            MyList<Car> listClone = new MyList<Car>();
+            Point<T>? current = begin;
+            MyList<T> listClone = new MyList<T>();
             for (int i = 0; current != null; i++)
             {
                 listClone.AddToEnd(current.Data);
